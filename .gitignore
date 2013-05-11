@@ -1,0 +1,10 @@
+*.grid
+*.tm
+Debug/
+Release/
+*.ncb
+*.*~
+*/GeneratedFiles/*
+*.obj
+HexViewer/HexViewer.vcproj.WIN-6V7INFK971J.Administrator.user
+HexViewer/HexViewer.vcproj.Wuyi-PC.Wuyi.user

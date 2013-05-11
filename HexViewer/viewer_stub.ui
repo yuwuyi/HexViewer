@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>viewer_stubClass</class>
+ <widget class="QMainWindow" name="viewer_stubClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>972</width>
+    <height>657</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>viewer_stub</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="ViewPort" name="widget" native="true"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>972</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuSlice">
+    <property name="title">
+     <string>Operations</string>
+    </property>
+    <addaction name="actionSlice"/>
+    <addaction name="actionJacobian_Coloring"/>
+    <addaction name="actionNSJ_Coloring"/>
+   </widget>
+   <addaction name="menuSlice"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionX">
+   <property name="text">
+    <string>X</string>
+   </property>
+  </action>
+  <action name="actionX_2">
+   <property name="text">
+    <string>X</string>
+   </property>
+  </action>
+  <action name="actionY">
+   <property name="text">
+    <string>Y</string>
+   </property>
+  </action>
+  <action name="actionZ">
+   <property name="text">
+    <string>Z</string>
+   </property>
+  </action>
+  <action name="actionX_3">
+   <property name="text">
+    <string>X</string>
+   </property>
+  </action>
+  <action name="actionIncrease">
+   <property name="text">
+    <string>Increase</string>
+   </property>
+   <property name="shortcut">
+    <string>.</string>
+   </property>
+  </action>
+  <action name="actionDecrease">
+   <property name="text">
+    <string>Decrease</string>
+   </property>
+   <property name="shortcut">
+    <string>,</string>
+   </property>
+  </action>
+  <action name="actionX_4">
+   <property name="text">
+    <string>X</string>
+   </property>
+  </action>
+  <action name="actionY_2">
+   <property name="text">
+    <string>Y</string>
+   </property>
+  </action>
+  <action name="actionZ_2">
+   <property name="text">
+    <string>Z</string>
+   </property>
+  </action>
+  <action name="actionSlice">
+   <property name="text">
+    <string>Slice Dialog</string>
+   </property>
+  </action>
+  <action name="actionJacobian_Coloring">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Jacobian-Coloring</string>
+   </property>
+  </action>
+  <action name="actionFind_NSJ">
+   <property name="text">
+    <string>NSJ Coloring</string>
+   </property>
+  </action>
+  <action name="actionNSJ_Coloring">
+   <property name="text">
+    <string>NSJ-Coloring</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>ViewPort</class>
+   <extends>QWidget</extends>
+   <header>viewport.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="viewer_stub.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>actionSlice</sender>
+   <signal>triggered()</signal>
+   <receiver>viewer_stubClass</receiver>
+   <slot>showSliceDlg()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>199</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionJacobian_Coloring</sender>
+   <signal>triggered()</signal>
+   <receiver>viewer_stubClass</receiver>
+   <slot>jacobianColoring()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>199</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionNSJ_Coloring</sender>
+   <signal>triggered()</signal>
+   <receiver>viewer_stubClass</receiver>
+   <slot>NSJColoring()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>485</x>
+     <y>328</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>increaseSlide()</slot>
+  <slot>decreaseSlide()</slot>
+  <slot>showSliceDlg()</slot>
+  <slot>jacobianColoring()</slot>
+  <slot>NSJColoring()</slot>
+ </slots>
+</ui>
