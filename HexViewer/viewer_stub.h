@@ -4,6 +4,7 @@
 #include <QtGui/QMainWindow>
 #include "ui_viewer_stub.h"
 
+class Renderer;
 class SliceDlg;
 class viewer_stub : public QMainWindow
 {
@@ -12,6 +13,7 @@ class viewer_stub : public QMainWindow
 public:
 	viewer_stub(QWidget *parent = 0, Qt::WFlags flags = 0);
 	~viewer_stub();
+	void addRenderer(Renderer *r);
 
 public slots:
 	void showSliceDlg();		

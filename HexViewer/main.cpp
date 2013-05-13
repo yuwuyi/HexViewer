@@ -2,6 +2,7 @@
 #include <QtGui/QApplication>
 #include <QMessageBox>
 #include <iostream>
+#include "Renderer.h"
 #include "RenderData.h"
 #include "HexVertex.h"
 #include "HexMesh.h"
@@ -18,9 +19,16 @@ int main(int argc, char *argv[])
 		exit(-1);
 	}
 
-	gRenderData.load(argv[1]);
+	HexMesh *hexmesh = new HexMesh;
+	hexmesh->read(argv[1]);
+	//gRenderData.load(argv[1]);
+	HexMeshRenderData *hexdata = new HexMeshRenderData(hexmesh);
+	HexMeshRenderer *hexrenderer = new HexMeshRenderer(hexdata);
+	hexrenderer->prepareData();
 
 	viewer_stub w;
+	//w.ui.widget->addRenderer(hexrenderer);
+	w.addRenderer(hexrenderer);
 	w.show();
 
 	return a.exec();

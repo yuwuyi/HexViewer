@@ -13,6 +13,43 @@ class Quad;
 class HalfQuad;
 class HexVertex;
 
+class RenderData  {
+public:
+	virtual ~RenderData() {}
+};
+
+
+class HexMeshRenderData : public RenderData {
+public:
+
+	HexMeshRenderData(HexMesh *hexmesh);
+	virtual ~HexMeshRenderData();
+
+	void prepareData();
+	
+	std::vector<GLfloat> getVertexArray();
+	std::vector<GLfloat> getNormalArray();
+	std::vector<GLfloat> getColorArray();
+	std::vector<GLuint> getIndexArray();
+
+	std::vector<GLfloat> getEdgeVertexArray();
+	std::vector<GLfloat> getEdgeColorArray();
+	std::vector<GLuint> getEdgeIndexArray();
+
+protected:
+	void compute_halfquad_normals();
+	void compute_vertex_normals();
+
+private:
+	HexMesh *m_hexmesh;
+	std::vector<HalfQuad *> m_render_quads;
+	std::vector<Point> m_normals;
+	std::map<HalfQuad*, Point> quad_normals;
+	std::map<HexVertex*, Point> vertex_normals;
+};
+
+
+/*
 class RenderData : public QObject
 {
 	Q_OBJECT
@@ -74,5 +111,5 @@ private:
 	bool isNSJColoring;
 
 };
-
+*/
 #endif // RenderData_h__

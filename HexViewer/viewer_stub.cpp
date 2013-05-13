@@ -16,12 +16,12 @@ viewer_stub::~viewer_stub()
 
 
 void viewer_stub::dirChanged(int dir) {
-	gRenderData.dirChanged(dir);
+	/*gRenderData.dirChanged(dir);*/
 	ui.widget->update();
 }
 
 void viewer_stub::offsetChanged(int offset) {
-	gRenderData.offsetChanged(offset);
+	/*gRenderData.offsetChanged(offset);*/
 	ui.widget->update();
 }
 
@@ -46,11 +46,16 @@ void viewer_stub::showSliceDlg() {
 
 
 void viewer_stub::jacobianColoring() {
-	gRenderData.jacobianColoring();
+	//gRenderData.jacobianColoring();
 	ui.widget->update();
 }
 
 void viewer_stub::NSJColoring() {
-	gRenderData.NSJColoring();
+	//gRenderData.NSJColoring();
 	ui.widget->update();
+}
+
+
+void viewer_stub::addRenderer(Renderer *r) {
+	ui.widget->addRenderer(r);
 }

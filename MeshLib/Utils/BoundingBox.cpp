@@ -1,5 +1,15 @@
 #include "BoundingBox.h"
+#include "../HexMesh/HexMesh.h"
+#include "../HexMesh/HexVertex.h"
+#include "../HexMesh/HexIterators.h"
 
+BoundingBox::BoundingBox(HexMesh *hexmesh) {
+	for (HexMeshVertexIterator hvit(hexmesh); !hvit.end(); ++hvit) {
+		m_points.push_back((*hvit)->point());
+	}
+	m_minpt = Point(1e4, 1e4, 1e4);
+	m_maxpt = Point(-1e4, -1e4, -1e4);
+}
 
 BoundingBox::BoundingBox(std::vector<Point>& points) 
 {

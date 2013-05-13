@@ -14,6 +14,176 @@
 #include <algorithm>
 #include <iostream>
 
+
+HexMeshRenderData::HexMeshRenderData(HexMesh *hexmesh)
+: m_hexmesh(hexmesh)
+{
+
+}
+
+HexMeshRenderData::~HexMeshRenderData() {
+
+}
+
+
+void HexMeshRenderData::prepareData() {
+	m_render_quads = m_hexmesh->getBoudnary();
+	compute_halfquad_normals();
+	compute_vertex_normals();
+}
+
+
+void HexMeshRenderData::compute_halfquad_normals() {
+	for (size_t i = 0 ; i < m_render_quads.size(); ++i) {
+		HalfQuad *halfquad = m_render_quads[i];
+		Point pts[3] = {halfquad->vertex(0)->point(), halfquad->vertex(1)->point(), halfquad->vertex(3)->point()};
+		Point norm = (pts[1] - pts[0]) ^ (pts[2] - pts[0]);
+		norm /= norm.norm();
+		quad_normals[halfquad] = norm;
+	}
+}
+
+void HexMeshRenderData::compute_vertex_normals() {
+	std::map<HexVertex*, std::vector<HalfQuad*> > vquadmap;
+	for (size_t i = 0; i < m_render_quads.size(); ++i) {
+		HalfQuad *halfquad = m_render_quads[i];
+		for (int j = 0; j < 4; ++j) {
+			HexVertex *v = halfquad->vertex(j);
+			vquadmap[v].push_back(halfquad);
+		}
+	}
+
+	for (std::map<HexVertex*, std::vector<HalfQuad*> >::iterator b = vquadmap.begin(),
+		e = vquadmap.end(); b != e; ++b) {
+		HexVertex *v = (*b).first;
+		std::vector<HalfQuad*>& halfquads = (*b).second;
+		
+		Point vnorm;
+		for (size_t i = 0; i < halfquads.size(); ++i) {
+			HalfQuad *halfquad = halfquads[i];
+			vnorm += quad_normals[halfquad];
+		}
+		vnorm /= halfquads.size(); 
+
+		vertex_normals[v] = vnorm;
+	}
+}
+
+std::vector<GLfloat> HexMeshRenderData::getVertexArray() {
+	std::vector<GLfloat> ver_array;
+
+	for (size_t i = 0; i < m_render_quads.size(); ++i) {
+		HalfQuad *halfquad = m_render_quads[i];
+		for (int j = 0; j < 4; ++j) {
+			ver_array.push_back(halfquad->vertex(j)->point()[0]);	
+			ver_array.push_back(halfquad->vertex(j)->point()[1]);	
+			ver_array.push_back(halfquad->vertex(j)->point()[2]);	
+		}
+	}
+	return ver_array;
+}
+
+std::vector<GLfloat> HexMeshRenderData::getNormalArray() {
+	std::vector<GLfloat> norm_array;
+	for (size_t i = 0; i < m_render_quads.size(); ++i) {
+		HalfQuad *halfquad = m_render_quads[i];
+		for (int j = 0; j < 4; ++j) {
+			norm_array.push_back(vertex_normals[halfquad->vertex(j)][0]);	
+			norm_array.push_back(vertex_normals[halfquad->vertex(j)][0]);	
+			norm_array.push_back(vertex_normals[halfquad->vertex(j)][0]);	
+		}
+	}
+	return norm_array;
+}
+
+std::vector<GLfloat> HexMeshRenderData::getColorArray() {
+	std::vector<GLfloat> color_array;
+		//Point BlueColor(63/255.0, 161/255.0, 253/255.0);	
+Point BlueColor(63/255.0, 161/255.0, 253/255.0);	
+	for (size_t i = 0; i < m_render_quads.size(); ++i) {
+		HalfQuad *halfquad = m_render_quads[i];
+		for (int j = 0; j < 4; ++j) {
+			color_array.push_back(BlueColor[0]);	
+			color_array.push_back(BlueColor[1]);	
+			color_array.push_back(BlueColor[2]);	
+		}
+	}
+	return color_array;
+}
+
+
+std::vector<GLuint> HexMeshRenderData::getIndexArray() {
+	std::vector<GLuint> index_array;
+	int count = 0;
+	for (size_t i = 0; i < m_render_quads.size(); ++i) {
+		HalfQuad *halfquad = m_render_quads[i];
+		for (int j = 0; j < 4; ++j, ++count) {
+			index_array.push_back(count);	
+		}
+	}
+
+	return index_array;
+}
+
+
+std::vector<GLfloat> HexMeshRenderData::getEdgeVertexArray() {
+	std::vector<GLfloat> ver_array;
+
+	for (size_t i = 0; i < m_render_quads.size(); ++i) {
+		HalfQuad *halfquad = m_render_quads[i];
+		for (int j = 0; j < 4; ++j) {
+			HexEdge *hedge = halfquad->quad()->hexedge(j);
+			Point pt0 = hedge->vertex(0)->point();
+			Point pt1 = hedge->vertex(1)->point();
+
+			ver_array.push_back(pt0[0]);	
+			ver_array.push_back(pt0[1]);	
+			ver_array.push_back(pt0[2]);	
+
+			ver_array.push_back(pt1[0]);	
+			ver_array.push_back(pt1[1]);	
+			ver_array.push_back(pt1[2]);	
+		}
+	}
+	return ver_array;
+
+}
+
+std::vector<GLfloat> HexMeshRenderData::getEdgeColorArray() {
+	std::vector<GLfloat> color_array;
+		//Point BlueColor(63/255.0, 161/255.0, 253/255.0);	
+Point BlackColor(0, 0, 0);
+	for (size_t i = 0; i < m_render_quads.size(); ++i) {
+		HalfQuad *halfquad = m_render_quads[i];
+		for (int j = 0; j < 4; ++j) {
+			color_array.push_back(BlackColor[0]);	
+			color_array.push_back(BlackColor[1]);	
+			color_array.push_back(BlackColor[2]);	
+
+			color_array.push_back(BlackColor[0]);	
+			color_array.push_back(BlackColor[1]);	
+			color_array.push_back(BlackColor[2]);	
+		}
+	}
+	return color_array;
+}
+
+std::vector<GLuint> HexMeshRenderData::getEdgeIndexArray() {
+	std::vector<GLuint> index_array;
+	int count = 0;
+	for (size_t i = 0; i < m_render_quads.size(); ++i) {
+		HalfQuad *halfquad = m_render_quads[i];
+		for (int j = 0; j < 4; ++j, ++count) {
+			/*index_array.push_back(4 * i + j);	
+			index_array.push_back(4 * i + (j + 1) % 4);	*/
+			index_array.push_back(count);
+		}
+	}
+
+	return index_array;
+}
+
+/*
 RenderData::RenderData(void) : m_hexmesh(0),  m_offset(0), m_dir(0), isJacobianColoring(false), isNSJColoring(false), m_level(0)
 {
 }
@@ -24,7 +194,7 @@ RenderData::~RenderData(void)
 }
 
 
-
+/
 void RenderData::compute_halfquad_normals() {
 	for (size_t i = 0 ; i < render_quads.size(); ++i) {
 		HalfQuad *halfquad = render_quads[i];
@@ -454,3 +624,5 @@ void RenderData::jacobianColoring() {
 void RenderData::NSJColoring() {
 	isNSJColoring = !isNSJColoring;
 }
+*/
+

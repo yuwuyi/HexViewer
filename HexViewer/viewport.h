@@ -2,7 +2,10 @@
 #define VIEWPORT_H
 
 #include <QGLWidget>
+#include <vector>
 #include "Camera.h"
+
+class Renderer;
 
 class ViewPort : public QGLWidget
 {
@@ -11,6 +14,8 @@ class ViewPort : public QGLWidget
 public:
 	ViewPort(QWidget *parent);
 	~ViewPort();
+
+	void addRenderer(Renderer *render);
 
 protected :
 	void initialMaterial ();
@@ -45,6 +50,9 @@ private:
 	float rotate_dist;							// How far the center of the trackball is from the camera
 	float view_dist;							// How far the center of the world is from the camera
 	
+	void clear();
+	
+	std::vector<Renderer*> m_renderers;
 	
 };
 

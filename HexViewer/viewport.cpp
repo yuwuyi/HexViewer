@@ -1,5 +1,6 @@
 #include "viewport.h"
 #include "RenderData.h"
+#include "Renderer.h"
 #include <QMouseEvent>
 
 
@@ -17,7 +18,7 @@ ViewPort::ViewPort(QWidget *parent)
 
 ViewPort::~ViewPort()
 {
-
+	clear();
 }
 
 void ViewPort::initializeGL()
@@ -25,7 +26,7 @@ void ViewPort::initializeGL()
 	GLfloat	light0_Ka[] = {0.1f,0.1f,0.1f,1.0f};
 	GLfloat	light0_Kd[] = {1.0f,1.0f,1.0f,1.0f};
 	GLfloat light0_Ks[] = {1.0f,1.0f,1.0f,1.0f};
-	GLfloat light0_Pos[] = {5.0f, 5.0f, 5.0f, 0.0f};
+	GLfloat light0_Pos[] = {3.0f, 3.0f, 3.0f, 0.0f};
 	GLfloat mat_specular[] = {1.0f, 1.0f, 1.0f, 1.0f};
 	GLfloat mat_emission[] = {0.0f, 0.0f, 0.0f, 1.0f};
 
@@ -46,6 +47,8 @@ void ViewPort::initializeGL()
 	glEnable(GL_NORMALIZE);
 	glEnable(GL_DEPTH_TEST);
 
+    //glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glEnable(GL_COLOR_MATERIAL);
 
 	InitCamera();
 }
@@ -65,13 +68,23 @@ void ViewPort::paintGL()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(1.0, 1.0, 1.0, 0.0); 
+
+
 	glPushMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
 	theCamera.SetGL(view_dist/5.0f, view_dist*5.0f, width(), height());
-	gRenderData.render();
+
+	for (size_t i = 0; i < m_renderers.size(); ++i) {
+		m_renderers[i]->render();
+	}
 	glPopMatrix();
+
+
+
+
+
 }
 
 void ViewPort::InitCamera() {
@@ -205,4 +218,17 @@ void ViewPort::Mousei2f(int x, int y, float *xf, float *yf)
 		*xf = 2.0f * x / screenwidth - 1.0f;
 		*yf = (1.0f - 2.0f * y / screenheight) / r;
 	}
+}
+
+
+void ViewPort::clear() {
+	for (size_t i = 0; i < m_renderers.size(); ++i)	 {
+		delete m_renderers[i];
+	}
+	m_renderers.clear();
+}
+
+
+void ViewPort::addRenderer(Renderer *render) {
+	m_renderers.push_back(render);
 }
