@@ -5,6 +5,7 @@
 #include "HalfQuad.h"
 #include "HexVertex.h"
 #include "HexMeshUtils.h"
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <map>
@@ -18,7 +19,6 @@ HexMesh::~HexMesh() {
 		delete m_hexedges[i];
 	}
 }
-
 
 void HexMesh::read(const char *filename) {
 	
@@ -50,7 +50,6 @@ void HexMesh::read(const char *filename) {
 			if (tv->id() >= m_next_vid) {
 				m_next_vid = tv->id() + 1;
 			}
-//			HexVertex *hv0 = id2Ver[0];	
 		} else if (title == "Hex") {
 			Hex *hex = createHex(ss);
 			id2Hex[hex->id()] = hex;
@@ -59,7 +58,6 @@ void HexMesh::read(const char *filename) {
 			}
 		}
 	}
-
 
 	input.close();
 
@@ -103,7 +101,13 @@ void HexMesh::read(const char *filename) {
 				quadmap[qlet] = quad;
 			} else {
 				if (quad->halfquad(1)) {
-					std::cout << "non-manifold!\n";
+					std::cout << "loding non-manifold!\n";
+					std::cout << "while loading hex: " << hex->id() << "\n";
+					std::cout << "quad vers: \n";
+					for (int dbg = 0; dbg < 4; ++dbg) {
+						std::cout << quad->halfquad(0)->vertex(dbg)->id() << " ";
+					}
+					std::cout << "\n";
 					exit(-1);
 				}
 				quad->halfquad(1) = halfquad;
@@ -130,9 +134,6 @@ void HexMesh::read(const char *filename) {
 	for (std::map<quadlet, Quad*>::iterator b = quadmap.begin(), e = quadmap.end(); b != e; ++b) {
 		Quad *quad = (*b).second;
 		HalfQuad *halfquad = quad->halfquad(0);
-		if (halfquad->hex()->id() == 75) {
-			std::cout <<".";
-		}
 		for (int i = 0; i < 4; ++i) {
 			HexVertex *v0 = halfquad->vertex(i);
 			HexVertex *v1 = halfquad->vertex((i+1) % 4);
@@ -152,8 +153,13 @@ void HexMesh::read(const char *filename) {
 		}
 	}
 
+	for (stdext::hash_map<int, Hex *>::iterator b = id2Hex.begin(), e = id2Hex.end(); b != e; ++b) {
+		Hex *hex = (*b).second;
+		std::vector<HexEdge*> &edges = hex->edges();
+		std::sort(edges.begin(), edges.end());
+		edges.erase( std::unique(edges.begin(), edges.end()), edges.end() );
+	}
 	
-
 }
 
 
@@ -209,7 +215,7 @@ HexVertex * HexMesh::createHexVertex(std::stringstream &ss) {
 
 Hex*  HexMesh::createHex(std::stringstream &ss) {
 	if (id2Hex.empty()) {
-		normalize();
+		//normalize();
 	}
 	int id;
 	int vids[8];
@@ -329,15 +335,21 @@ bool sort_hv(HexVertex *v1, HexVertex *v2) {
 	return v1->point()[2] < v2->point()[2];
 }
 
-Hex *HexMesh::addHex(HexVertex *vers[8]) {
+Hex *HexMesh::addHex(HexVertex *vers[8], std::vector<HalfQuad*> &givenHalfQuads) {
 	HexVertex *hver[8];
 	for (int i = 0; i < 8; ++i) {
 		hver[i] = vers[i];
 	}
 
 //	std::sort(hver, hver + 8, sort_hv);
-	Hex *hex = new Hex(m_next_hid, id2Hex.size(), hver);
+	Hex *hex = new Hex(m_next_hid, id2Hex.size(), hver, std::string(""), givenHalfQuads);
 	id2Hex[hex->id()] = hex;
 	++m_next_hid;
 	return hex;
+}
+
+
+void HexMesh::swapHalfQuad(HalfQuad *originalHQ, HalfQuad *halfQuad) {
+	//check the boundary half quad
+
 }

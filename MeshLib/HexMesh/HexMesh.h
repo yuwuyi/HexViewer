@@ -29,7 +29,7 @@ public:
 	int hexSize() const { return id2Hex.size(); }
 	int vertexSize() const { return id2Ver.size(); }
 	HexVertex *addVertex(Point pt);
-	Hex *addHex(HexVertex *vers[8]);
+	Hex *addHex(HexVertex *vers[8], std::vector<HalfQuad*> & givenHalfQuads);
 private:
 	HexVertex *createHexVertex(std::stringstream &ss);
 	Hex* createHex(std::stringstream &ss);
@@ -37,9 +37,10 @@ private:
 	void normalize();
 
 
-private:
+public:
 	int m_next_vid;
 	int m_next_hid;
+private:
 	stdext::hash_map<int, HexVertex *>		id2Ver;			
 	stdext::hash_map<int, Hex *>			id2Hex;		
 	std::vector<HalfQuad *> m_boundary_halfquads;
@@ -48,6 +49,12 @@ private:
 	friend class HexMeshHexIterator;
 	friend class HexMeshVertexIterator;
 	friend class HexMeshQuadIterator;
+
+
+	//dynamic part
+public:
+	void swapHalfQuad(HalfQuad *originalHQ, HalfQuad *halfQuad);
 };
+
 
 #endif // HexMesh_h__
